@@ -11,25 +11,49 @@ import { StudentService } from 'src/app/services/student.service';
 })
 export class StudentsComponent implements OnInit {
   studentModal: boolean = false;
+  studentEditModal: boolean = false;
   studentForm: FormGroup;
   students: any = [];
 
-  constructor(private authService: AuthService, private studentService: StudentService) {
+  constructor(
+    private authService: AuthService,
+    private studentService: StudentService
+  ) {
     this.studentForm = new FormGroup({
       studentNumber: new FormControl('', Validators.required),
       name: new FormControl('', Validators.required),
       yearLevel: new FormControl('', Validators.required),
       section: new FormControl('', Validators.required),
-      course: new FormControl('', Validators.required)
+      course: new FormControl('', Validators.required),
+    });
+  }
+
+  editStudentData(data: any) {
+    const { studentNumber, name, course, yearLevel, section } = data;
+
+    this.studentEditModal = true;
+
+    this.studentForm.setValue({
+      studentNumber,
+      name,
+      course,
+      yearLevel,
+      section,
     });
   }
 
   ngOnInit(): void {
-    this.getStudents()
+    this.getStudents();
   }
 
-  openCloseModal() {
+  openCloseStudentModal() {
     this.studentModal = !this.studentModal;
+  }
+
+  openCloseEditModal() {
+    this.studentEditModal = !this.studentEditModal;
+
+    this.studentForm.reset();
   }
 
   logout() {
@@ -37,17 +61,39 @@ export class StudentsComponent implements OnInit {
   }
 
   getStudents() {
-    this.students = this.studentService.getStudents()
+    this.students = this.studentService.getStudents();
   }
 
-  onSubmit() {
+  deleteStudent(data: any) {
+    const students = this.students.filter((res: any) => {
+      return res.studentNumber !== data.studentNumber;
+    });
+
+    this.studentService.storeToStorage(students)
+    this.getStudents();
+  }
+
+  onSubmitStudentEdit() {
+    if (this.studentForm.status == 'INVALID') {
+      return;
+    }
+
+    this.studentService.updateStudentData(this.studentForm.value);
+
+    this.studentEditModal = false;
+    this.studentForm.reset();
+    this.getStudents();
+  }
+
+  onSubmitStudentCreation() {
     if (this.studentForm.status == 'INVALID') {
       return;
     }
 
     this.studentService.storeStudent(this.studentForm.value);
-    this.studentForm.reset()
-    this.studentModal = false
-    this.getStudents()
+
+    this.studentModal = false;
+    this.studentForm.reset();
+    this.getStudents();
   }
 }

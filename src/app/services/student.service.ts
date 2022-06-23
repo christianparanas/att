@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { take } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -28,14 +29,32 @@ export class StudentService {
     };
   }
 
+  updateStudentData(data: any) {
+    const target = this.students.find(
+      (res: any) => res.studentNumber === data.studentNumber
+    );
+
+    target.name = data.name
+    target.course = data.course
+    target.year = data.year
+    target.section = data.section
+
+    localStorage.removeItem('students');
+    this.storeToStorage(this.students);
+  }
+
+  storeToStorage(data: any) {
+    localStorage.setItem('students', JSON.stringify(data));
+  }
+
   getStudents() {
     if (localStorage.getItem('students') === null) {
       return false;
     }
 
     const res: any = localStorage.getItem('students');
-    let students = JSON.parse(res);
+    this.students = JSON.parse(res);
 
-    return students;
+    return this.students;
   }
 }
