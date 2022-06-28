@@ -55,36 +55,48 @@
           type="text"
           required
           formControlName="subject"
-          placeholder="Section"
+          placeholder="Subject"
           class="p-2 text-sm mb-3 bg-white border border-gray-200 rounded shadow-sm outline-0 w-full"
         />
 
         <p class="mb-2 font-semibold text-gray-700">Course</p>
-        <input
-          type="text"
-          required
+        <select
           formControlName="course"
-          placeholder="Course"
+          required
+          placeholder="Select Course"
           class="p-2 text-sm mb-3 bg-white border border-gray-200 rounded shadow-sm outline-0 w-full"
-        />
+        >
+          <option value="BSIT">BSIT</option>
+          <option value="BSECE">BSECE</option>
+        </select>
 
         <p class="mb-2 font-semibold text-gray-700">Section</p>
-        <input
-          type="text"
-          required
+        <select
           formControlName="section"
-          placeholder="Section"
+          required
+          placeholder="Select Course"
+          aria-placeholder="Select"
           class="p-2 text-sm mb-3 bg-white border border-gray-200 rounded shadow-sm outline-0 w-full"
-        />
+        >
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="C">C</option>
+          <option value="D">D</option>
+        </select>
 
         <p class="mb-2 font-semibold text-gray-700">Year Level</p>
-        <input
-          type="text"
-          required
+        <select
           formControlName="yearLevel"
-          placeholder="Year Level"
+          required
+          placeholder="Select Course"
+          aria-placeholder="Select"
           class="p-2 text-sm mb-3 bg-white border border-gray-200 rounded shadow-sm outline-0 w-full"
-        />
+        >
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
 
         <button
           type="submit"
@@ -128,7 +140,8 @@
         [queryParams]="{
           course: class.course,
           year: class.yearLevel,
-          section: class.section
+          section: class.section,
+          subject: class.subject
         }"
       >
         See Class <i class="fal fa-arrow-right"></i>

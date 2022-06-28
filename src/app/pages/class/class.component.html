@@ -18,6 +18,169 @@
   </div>
 </div>
 
-<div class="">
+<div
+  [ngClass]="{
+    'bg-slate-800 opacity-95 w-full h-screen absolute z-[99] left-0 top-0 hidden': true,
+    block: addAttModal,
+    hidden: addAttModal == false
+  }"
+></div>
+<div
+id="menu"
+[ngClass]="{
+  'w-full h-full top-0 left-0 fixed z-[100] sticky-0 opacity-100 hidden': true,
+  block: addAttModal,
+  hidden: addAttModal == false
+}"
+>
+<div class="flex justify-center h-screen items-center antialiased">
+  <div class="flex flex-col w-[500px] mx-auto rounded-lg shadow-xl">
+    <div
+      class="flex flex-row justify-between p-4 bg-red-500 text-white rounded-tl-lg rounded-tr-lg"
+    >
+      <p class="font-semibold text-white">Add {{ data.course }} {{ data.year }}{{ data.section }} Attendance</p>
+      <div class="cursor-pointer" (click)="openCloseAddAttModal()">
+        <i class="fal fa-times"></i>
+      </div>
+    </div>
+
+    <form
+      class="flex flex-col px-4 py-4 bg-gray-50 rounded-bl-lg rounded-br-lg text-slate-800"
+      (ngSubmit)="onSubmit()"
+      [formGroup]="attendanceForm"
+      autocomplete="off"
+    >
+      <p class="mb-2 font-semibold text-gray-700">Session Number</p>
+      <input
+        type="text"
+        required
+        formControlName="session_number"
+        placeholder="Session Number"
+        class="p-2 text-sm mb-3 bg-white border border-gray-200 rounded shadow-sm outline-0 w-full"
+      />
+
+      <p class="mb-2 font-semibold text-gray-700">Session Topic</p>
+      <input
+        type="text"
+        required
+        formControlName="session_topic"
+        placeholder="Session Topic"
+        class="p-2 text-sm mb-3 bg-white border border-gray-200 rounded shadow-sm outline-0 w-full"
+      />
+
+      <button
+        type="submit"
+        name="submit"
+        class="px-4 py-3 mt-2 text-white w-full font-semibold bg-red-500 rounded-lg hover:bg-red-500/90 cursor-pointer"
+      >
+        Add
+      </button>
+    </form>
+  </div>
+</div>
+</div>
+
+
+<div class="pt-[120px] w-[1200px] mx-auto">
+  <div class="flex justify-between items-center">
+    <h1 class="font-black text-3xl">{{ data.course }} {{ data.year }}{{ data.section }} <span class="text-slate-400 text-[15px]">Attendance</span></h1>
+    <button
+      
+      class="font-semibold bg-slate-900 py-2 px-3 rounded-lg hover:bg-slate-900/80" (click)="openCloseAddAttModal()"
+    >
+      Add Attendance
+    </button>
+  </div>
+
+  <div class="grid gap-5 mt-8">
+    <div class="" *ngFor="let att of attendance">
+      <div class="bg-slate-900/70 p-3 rounded-tr-lg rounded-tl-lg">
+        <h2>Session number: {{ att.session_number }}</h2>
+        <h2>Session topic: {{ att.session_topic }}</h2>
+        <h2 class="mt-4">Students:</h2>
+      </div>
+
+      <div class="w-full">
+        <div class="inline-block min-w-full shadow rounded-br-lg rounded-bl-lg overflow-hidden">
+          <table class="min-w-full leading-normal">
+            <thead>
+              <tr>
+                <th
+                  class="px-5 py-3 bg-slate-900 text-left text-xs font-semibold text-white uppercase tracking-wider w-[300px]"
+                >
+                  Student Number
+                </th>
+                <th
+                  class="px-5 py-3 bg-slate-900 text-left text-xs font-semibold text-white uppercase tracking-wider"
+                >
+                  Name
+                </th>
+                <th
+                  class="px-5 py-3 bg-slate-900 text-left text-xs font-semibold text-white uppercase tracking-wider"
+                >
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <div *ngIf="att.students?.length == 0" class="mt-5 ml-4">
+              No data available.
+            </div>
   
+            <tbody>
+              <tr *ngFor="let student of att.students">
+                <td
+                  class="px-5 py-5 border-b border-slate-800 bg-slate-900/70 text-sm"
+                >
+                  <p class="text-slate-50 whitespace-no-wrap">
+                    {{ student.student_number }}
+                  </p>
+                </td>
+                <td
+                  class="px-5 py-5 border-b border-slate-800 bg-slate-900/70 text-sm"
+                >
+                  <p class="text-slate-50 whitespace-no-wrap">
+                    {{ student.name }}
+                  </p>
+                </td>
+                <td
+                  class="px-5 py-5 border-b border-slate-800 bg-slate-900/70 text-sm"
+                >
+                <span
+                *ngIf="student.attendance_status == 'present'"
+                  class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight"
+                >
+                  <span
+                    aria-hidden
+                    class="absolute inset-0 bg-green-200 opacity-50 rounded-full"
+                  ></span>
+                  <span class="relative">present</span>
+                </span>
+
+                <span
+                *ngIf="student.attendance_status == 'absent'"
+                  class="relative inline-block px-3 py-1 font-semibold text-red-900 leading-tight"
+                >
+                  <span
+                    aria-hidden
+                    class="absolute inset-0 bg-red-200 opacity-50 rounded-full"
+                  ></span>
+                  <span class="relative">absent</span>
+                </span>
+
+                <span
+                  *ngIf="student.attendance_status == 'pending'"
+                  class="relative inline-block px-3 py-1 font-semibold  leading-tight"
+                >
+                  <button (click)="changeStatus(1, att, student.student_number)" class="bg-green-200 text-green-900 py-2 px-3 rounded-md shadow-md mr-2 hover:bg-green-800 hover:text-slate-50 transition-all">Present</button>
+                  <button (click)="changeStatus(2, att, student.student_number)" class="bg-red-200 text-red-900 py-2 px-3 rounded-md shadow-md hover:bg-red-800 hover:text-slate-50 transition-all">Absent</button>
+                </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </div>
