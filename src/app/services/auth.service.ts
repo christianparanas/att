@@ -21,7 +21,7 @@ export class AuthService {
   login(data: any) {
     const { username, password } = data
 
-    if(username == "kris" && password == "kris") {
+    if(username == "admin" && password == "admin") {
       this.setSession()
 
       this.router.navigate(['/']);
